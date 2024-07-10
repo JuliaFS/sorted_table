@@ -3,7 +3,15 @@ import { useState } from 'react'
 import './table.css'
 
 export const Table = ({ rows }) => {
-  const [sortedRows, setRows] = useState(rows)
+  const [sortedRows, setRows] = useState(rows);
+
+  const formatEntry = (entry: string | number | boolean) => {
+    if (typeof entry === 'boolean') {
+      return entry ? '✅' : '❌'
+    }
+  
+    return entry;
+  }
 
   return (
     <table>
@@ -18,7 +26,7 @@ export const Table = ({ rows }) => {
         {sortedRows.map((row, index) => (
           <tr key={index}>
             {Object.values(row).map((entry, columnIndex) => (
-              <td key={columnIndex}>{entry}</td>
+              <td key={columnIndex}>{formatEntry(entry)}</td>
             ))}
           </tr>
         ))}
