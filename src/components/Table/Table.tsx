@@ -1,36 +1,45 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import './table.css'
+import "./table.css";
+import { capitalize } from "../../utils";
 
-export const Table = ({ rows }) => {
+import { Data } from '../../types'
+
+export type TableProps = {
+  rows: Data
+}
+
+export const Table = ({ rows } : TableProps) => {
   const [sortedRows, setRows] = useState(rows);
 
   const formatEntry = (entry: string | number | boolean) => {
-    if (typeof entry === 'boolean') {
-      return entry ? '✅' : '❌'
+    if (typeof entry === "boolean") {
+      return entry ? "✅" : "❌";
     }
-  
+
     return entry;
-  }
+  };
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {Object.keys(rows[0]).map((entry, index) => (
-            <th key={index}>{entry}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {sortedRows.map((row, index) => (
-          <tr key={index}>
-            {Object.values(row).map((entry, columnIndex) => (
-              <td key={columnIndex}>{formatEntry(entry)}</td>
+    <div className='table-container'>
+      <table>
+        <thead>
+          <tr>
+            {Object.keys(rows[0]).map((entry, index) => (
+              <th key={index}>{capitalize(entry)}</th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
+        </thead>
+        <tbody>
+          {sortedRows.map((row, index) => (
+            <tr key={index}>
+              {Object.values(row).map((entry, columnIndex) => (
+                <td key={columnIndex}>{formatEntry(entry)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
