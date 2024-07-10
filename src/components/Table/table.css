@@ -23,3 +23,22 @@ tr:hover {
     background: #2f2f2f;
     color: white;
 }
+
+.controls {
+    display: flex;
+  }
+  
+  input,
+  select {
+    flex: 1;
+    padding: 5px 10px;
+    border: 0;
+  }
+  
+  button {
+    background: #2f2f2f;
+    color: #FFF;
+    border: 0;
+    cursor: pointer;
+    padding: 5px 10px;
+  }

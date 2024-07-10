@@ -1,27 +1,76 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-import "./table.css";
-import { capitalize } from "../../utils";
-
+import { capitalize } from '../../utils'
+import './table.css'
 import { Data } from '../../types'
 
 export type TableProps = {
   rows: Data
 }
 
-export const Table = ({ rows } : TableProps) => {
-  const [sortedRows, setRows] = useState(rows);
+export const Table = ({ rows }: TableProps) => {
+  const [sortedRows, setRows] = useState(rows)
+  const [order, setOrder] = useState('asc')
+  const [sortKey, setSortKey] = useState(Object.keys(rows[0])[0])
 
   const formatEntry = (entry: string | number | boolean) => {
-    if (typeof entry === "boolean") {
-      return entry ? "✅" : "❌";
+    if (typeof entry === 'boolean') {
+      return entry ? '✅' : '❌'
     }
 
-    return entry;
-  };
+    return entry
+  }
+
+  const filter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+
+    if (value) {
+      setRows([ ...rows.filter(row => {
+        return Object.values(row)
+          .join('')
+          .toLowerCase()
+          .includes(value)
+      }) ])
+    } else {
+      setRows(rows)
+    }
+  }
+
+  const sort = (value: keyof Data[0], order: string) => {
+    const returnValue = order === 'desc' ? 1 : -1
+
+    setSortKey(value)
+    setRows([ ...sortedRows.sort((a, b) => {
+      return a[value] > b[value]
+        ? returnValue * -1
+        : returnValue
+    }) ])
+  }
+
+  const updateOrder = () => {
+    const updatedOrder = order === 'asc' ? 'desc' : 'asc'
+
+    setOrder(updatedOrder)
+    sort(sortKey as keyof Data[0], updatedOrder)
+  }
 
   return (
-    <div className='table-container'>
+    <>
+      <div className="controls">
+        <input
+          type="text"
+          placeholder="Filter items"
+          onChange={filter}
+        />
+        <select onChange={(event) => sort(event.target.value as keyof Data[0], order)}>
+          {Object.keys(rows[0]).map((entry, index) => (
+            <option value={entry} key={index}>
+              Order by {capitalize(entry)}
+            </option>
+          ))}
+        </select>
+        <button onClick={updateOrder}>Switch order ({order})</button>
+      </div>
       <table>
         <thead>
           <tr>
@@ -40,6 +89,9 @@ export const Table = ({ rows } : TableProps) => {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-};
+      {!sortedRows.length && (
+        <h1>No results... Try expanding the search</h1>
+      )}
+    </>
+  )
+}
